@@ -1,0 +1,67 @@
+AGL SoDeV Zonal Playground - Git Ignore
+Yocto build artifacts
+agl-workspace/build/tmp/
+agl-workspace/build/sstate-cache/
+agl-workspace/build/downloads/
+agl-workspace/build/cache/
+agl-workspace/build/conf/bblayers.conf.bak
+agl-workspace/build/conf/local.conf.bak
+Downloaded layers
+agl-workspace/external/
+agl-workspace/meta-*/
+Generated images
+images/.ext4
+images/.wic
+images/.wic.xz
+images/.bin
+images/.dtb
+images/xen
+images/Image
+images/*.cpio.gz
+Device tree sources (keep only .dts, ignore compiled .dtb)
+.dtb
+overlays/.dtb
+Logs
+*.log
+.log.
+agl-workspace/build/tmp/log/
+Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+.sublime-
+OS files
+.DS_Store
+Thumbs.db
+Python
+pycache/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+Podman/Docker
+*.pid
+*.sock
+SSH keys (if generated locally)
+*.pem
+*.key
+Xen trace files
+*.trace
+*.dat
+QEMU state
+*.qcow2
+*.qcow2.bak
+Temporary files
+tmp/
+temp/
+*.tmp
+Compressed archives
+*.tar.gz
+*.tar.xz
+*.zip
+Keep example configs
+!conf/local.conf
+!xl-configs/.cfg
+!manifests/.xml

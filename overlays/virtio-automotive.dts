@@ -1,0 +1,94 @@
+```dts
+/dts-v1/;
+/plugin/;
+
+/*
+ * AGL SoDeV - VirtIO Automotive Device Tree Overlay
+ * Adds VirtIO MMIO devices for inter-VM communication
+ */
+
+/ {
+    compatible = "xen,xenvm";
+    
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            #address-cells = <2>;
+            #size-cells = <2>;
+            
+            /* VirtIO MMIO region for CAN bus */
+            virtio_can@a000000 {
+                compatible = "virtio,mmio";
+                reg = <0x0 0x0a000000 0x0 0x200>;
+                interrupts = <0 16 4>;
+                interrupt-parent = <&gic>;
+                status = "okay";
+                
+                /* CAN bus properties */
+                can-bus {
+                    compatible = "virtual,can";
+                    bitrate = <500000>;
+                    sample-point = <875>;
+                };
+            };
+            
+            /* VirtIO MMIO region for VSS broker communication */
+            virtio_vsock@a000200 {
+                compatible = "virtio,mmio";
+                reg = <0x0 0x0a000200 0x0 0x200>;
+                interrupts = <0 17 4>;
+                interrupt-parent = <&gic>;
+                status = "okay";
+                
+                /* VSS properties */
+                vss-broker {
+                    compatible = "covesa,vss";
+                    guest-cid =
+3;  /* HMI VM CID */
+};
+};
+        /* VirtIO MMIO region for shared memory (inter-VM) */
+        virtio_shmem@a000400 {
+            compatible = "virtio,mmio";
+            reg = <0x0 0x0a000400 0x0 0x200>;
+            interrupts = <0 18 4>;
+            interrupt-parent = <&gic>;
+            status = "okay";
+            
+            shared-memory {
+                compatible = "shared-dma-pool";
+                size = <0x0 0x100000>;  /* 1MB shared region */
+                alignment = <0x0 0x1000>;
+            };
+        };
+    };
+};
+
+/* Dom0less Zephyr VM configuration */
+fragment@1 {
+    target-path = "/chosen";
+    __overlay__ {
+        /* Zephyr domain configuration */
+        dom0less-domU {
+            compatible = "xen,domain";
+            #address-cells = <1>;
+            #size-cells = <1>;
+            
+            domain-name = "zephyr-rt-vm";
+            memory = <0x0 0x2000000>;  /* 32MB */
+            cpus = <2>;
+            cpu-affinity = <6 7>;  /* Pin to cores 6-7 */
+            
+            /* Zephyr kernel */
+            module@0 {
+                compatible = "multiboot,kernel";
+                reg = <0x80000000 0x100000>;  /* 1MB kernel */
+                bootargs = "";
+            };
+            
+            /* VirtIO console for Zephyr */
+            vpl011;
+        };
+    };
+};
+};

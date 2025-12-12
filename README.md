@@ -1,4 +1,3 @@
-markdown
 # AGL SoDeV Zonal Playground
 
 **A one-click sandbox for experimenting with AGL's Software-Defined Vehicle virtualization stack**

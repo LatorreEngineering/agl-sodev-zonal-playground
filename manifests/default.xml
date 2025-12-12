@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- AGL SoDeV Zonal Playground Manifest -->
+  <!-- Based on AGL Terrific Trout (15.0.0) with Xen/Virtualization support -->
+  
+  <remote name="agl" fetch="https://gerrit.automotivelinux.org/gerrit"/>
+  <remote name="yocto" fetch="https://git.yoctoproject.org/git"/>
+  <remote name="oe" fetch="https://github.com/openembedded"/>
+  <remote name="xen" fetch="https://xenbits.xen.org/git-http"/>
+  
+  <default sync-j="4" revision="refs/heads/master"/>
+  
+  <!-- AGL Core Layers (Terrific Trout = Scarthgap 5.0) -->
+  <project name="AGL/meta-agl" path="meta-agl" remote="agl" revision="refs/heads/trout">
+    <linkfile src="scripts/aglsetup.sh" dest="aglsetup.sh"/>
+    <linkfile src="scripts/agl-setup.sh" dest="agl-setup.sh"/>
+  </project>
+  
+  <project name="AGL/meta-agl-demo" path="meta-agl-demo" remote="agl" revision="refs/heads/trout"/>
+  <project name="AGL/meta-agl-devel" path="meta-agl-devel" remote="agl" revision="refs/heads/trout"/>
+  
+  <!-- Yocto/Poky Base (Scarthgap 5.0 for Terrific Trout) -->
+  <project name="poky" path="external/poky" remote="yocto" revision="scarthgap"/>
+  
+  <!-- OpenEmbedded Core Layers -->
+  <project name="meta-openembedded" path="external/meta-openembedded" remote="oe" revision="scarthgap"/>
+  
+  <!-- Xen Hypervisor Layer -->
+  <project name="meta-virtualization" path="external/meta-virtualization" remote="oe" revision="scarthgap"/>
+  
+  <!-- Qt/Wayland for HMI -->
+  <project name="meta-qt5" path="external/meta-qt5" remote="oe" revision="scarthgap"/>
+  
+  <!-- Automotive-specific layers -->
+  <project name="AGL/meta-agl-cluster-demo" path="meta-agl-cluster-demo" remote="agl" revision="refs/heads/trout"/>
+  
+  <!-- Security/AppFW -->
+  <project name="AGL/meta-agl-security" path="meta-agl-security" remote="agl" revision="refs/heads/trout"/>
+  
+  <!-- Hardware BSP Layers -->
+  <!-- For QEMU ARM64 -->
+  <project name="meta-arm" path="external/meta-arm" remote="yocto" revision="scarthgap"/>
+  
+  <!-- For Raspberry Pi 5 -->
+  <project name="meta-raspberrypi" path="external/meta-raspberrypi" remote="yocto" revision="scarthgap"/>
+  
+  <!-- For Renesas R-Car (H3/M3) -->
+  <project name="AGL/meta-renesas" path="meta-renesas" remote="agl" revision="refs/heads/trout"/>
+  
+  <!-- Containerization (Podman/Docker) -->
+  <project name="meta-virtualization" path="external/meta-virtualization-extra" remote="oe" revision="scarthgap"/>
+  
+</manifest>

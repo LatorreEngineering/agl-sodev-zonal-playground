@@ -1,0 +1,95 @@
+```yaml
+# AGL SoDeV - Telematics Container (Podman Quadlet)
+# VSS Kuksa.VAL databroker for vehicle signal access
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: telematics-vss
+  labels:
+    app: agl-sodev
+    component: telematics
+spec:
+  restartPolicy: Always
+  
+  # Run rootless for security
+  userns: keep-id
+  
+  containers:
+  - name: kuksa-databroker
+    image: ghcr.io/eclipse/kuksa.val/databroker:0.4.0
+    
+    # Resource limits
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "1.0"
+      requests:
+        memory: 256Mi
+        cpu: "0.5"
+    
+    # Network configuration
+    ports:
+    - containerPort: 55555
+      hostPort: 55555
+      protocol: TCP
+    - containerPort: 8090
+      hostPort: 8090
+      protocol: TCP
+    
+    # Environment variables
+    env:
+    - name: KUKSA_PORT
+      value: "55555"
+    - name: KUKSA_INSECURE
+      value: "true"  # For testing only
+    - name: RUST_LOG
+      value: "info"
+    
+    # Volume mounts (for VSS spec and certificates)
+    volumeMounts:
+    - name: vss-spec
+      mountPath: /vss
+      readOnly: true
+    - name: kuksa-config
+      mountPath: /config
+      readOnly: true
+    
+    # Health check
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8090
+      initialDelaySeconds: 10
+      periodSeconds: 30
+    
+    # Command override (if needed)
+    # command: ["/app/databroker"]
+    # args: ["--port", "55555", "--vss", "/vss/vss_release_4.0.json"]
+  
+  volumes:
+  - name: vss-spec
+    hostPath:
+      path: /usr/local/share/agl-sodev/vss
+      type: Directory
+  - name: kuksa-config
+    hostPath:
+      path: /usr/local/share/agl-sodev/config
+      type: Directory
+
+# Security context
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false  # Kuksa needs write access
+
+# Network mode (host for easier access from VMs)
+hostNetwork: true
+
+# DNS configuration (use dom0 resolver)
+dnsPolicy: ClusterFirst
+```
